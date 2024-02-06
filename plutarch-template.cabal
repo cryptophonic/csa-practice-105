@@ -127,6 +127,7 @@ library
   import:          lang, dependencies
   exposed-modules:
     AlwaysSucceeds
+    ContractTypes
     Utils
 
   other-modules:   Conversions
