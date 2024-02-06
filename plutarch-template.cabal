@@ -128,6 +128,9 @@ library
   exposed-modules:
     AlwaysSucceeds
     ContractTypes
+    ContractTypes_davidp
+    ContractTypes_matthias
+    ContractTypes_suganya
     Utils
 
   other-modules:   Conversions

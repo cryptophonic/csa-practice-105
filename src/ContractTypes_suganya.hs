@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module ContractTypes (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..)) where
+module ContractTypes_suganya (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..)) where
 
 import Plutarch.Api.V2 (PAddress)
 import Plutarch.DataRepr (DerivePConstantViaData (DerivePConstantViaData), PDataFields)
@@ -18,7 +18,6 @@ data SimpleSale = SimpleSale
 PlutusTx.makeIsDataIndexed ''SimpleSale [('SimpleSale, 0)]
 
 -- Constr 0 [Constr 0 [Constr 0 [B "\255\255"],Constr 1 []],I 10]
--- https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Typeclasses/PlutusType,%20PCon,%20and%20PMatch.md#implementing-plutustype-for-your-own-types-data-encoding
 data PSimpleSale (s :: S)
   = PSimpleSale
       ( Term
@@ -32,18 +31,38 @@ data PSimpleSale (s :: S)
   deriving stock (Generic)
   deriving anyclass (PlutusType, PIsData, PDataFields, PEq, PShow)
 
--- https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Usage/Deriving%20for%20newtypes.md
 instance DerivePlutusType PSimpleSale where type DPTStrat _ = PlutusTypeData -- Data Encoding
 
--- https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Typeclasses/PConstant%20and%20PLift.md#implementing-pconstant--plift
 instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale -- plift Plutarch -> PlutusTx
--- https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Typeclasses/PConstant%20and%20PLift.md#implementing-pconstant--plift
+
 deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale) -- pconstant PlutusTx -> Plutarch
 
---PlutusTx
 data MarketRedeemer = Buy | Withdraw
   deriving stock (Generic, Show, Prelude.Eq)
 
 PlutusTx.makeIsDataIndexed ''MarketRedeemer [('Buy, 0), ('Withdraw, 1)]
+-- sum data types 
+data PMarketRedeemer (s :: S)
+  = (Term
+        s
+        (
+            ( PDataRecord
+              '[ "0" ':= Buy
+               ]
+            )
+        )
+      Term
+        s
+        (
+            ( PDataRecord
+              '[
+                 "1" ':= Withdraw
+               ]
+            )
+        )
+     
+    )
+  deriving stock (Generic)
+  deriving anyclass (PlutusType, PIsData, PDataFields, PEq, PShow)
 
--- Plutarch representation
+  instance DerivePlutusType PMarketRedeemer where type DPTStrat _ = PlutusTypeData -- Data Encoding
