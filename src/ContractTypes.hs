@@ -37,7 +37,7 @@ instance DerivePlutusType PSimpleSale where type DPTStrat _ = PlutusTypeData -- 
 
 -- https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Typeclasses/PConstant%20and%20PLift.md#implementing-pconstant--plift
 instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale -- plift Plutarch -> PlutusTx
-https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Typeclasses/PConstant%20and%20PLift.md#implementing-pconstant--plift
+-- https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Typeclasses/PConstant%20and%20PLift.md#implementing-pconstant--plift
 deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale) -- pconstant PlutusTx -> Plutarch
 
 --PlutusTx

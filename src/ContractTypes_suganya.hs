@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module ContractTypes_suganya (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..)) where
+module ContractTypes_suganya (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..),PMarketRedeemer(..)) where
 
 import Plutarch.Api.V2 (PAddress)
 import Plutarch.DataRepr (DerivePConstantViaData (DerivePConstantViaData), PDataFields)
@@ -33,36 +33,22 @@ data PSimpleSale (s :: S)
 
 instance DerivePlutusType PSimpleSale where type DPTStrat _ = PlutusTypeData -- Data Encoding
 
-instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale -- plift Plutarch -> PlutusTx
+-- plift Plutarch -> PlutusTx
+instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale 
 
-deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale) -- pconstant PlutusTx -> Plutarch
+-- pconstant PlutusTx -> Plutarch ,m 
+deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale) 
 
-data MarketRedeemer = Buy | Withdraw
+data MarketRedeemer = BuyAction | WithdrawAction
   deriving stock (Generic, Show, Prelude.Eq)
 
-PlutusTx.makeIsDataIndexed ''MarketRedeemer [('Buy, 0), ('Withdraw, 1)]
+PlutusTx.makeIsDataIndexed ''MarketRedeemer [('BuyAction, 0), ('WithdrawAction, 1)]
+
 -- sum data types 
 data PMarketRedeemer (s :: S)
-  = (Term
-        s
-        (
-            ( PDataRecord
-              '[ "0" ':= Buy
-               ]
-            )
-        )
-      Term
-        s
-        (
-            ( PDataRecord
-              '[
-                 "1" ':= Withdraw
-               ]
-            )
-        )
-     
-    )
+  = PBuy (Term s (PDataRecord '[]))
+  | PWithdraw (Term s (PDataRecord '[]))
   deriving stock (Generic)
-  deriving anyclass (PlutusType, PIsData, PDataFields, PEq, PShow)
+  deriving anyclass (PlutusType, PIsData, PEq, PShow)
 
-  instance DerivePlutusType PMarketRedeemer where type DPTStrat _ = PlutusTypeData -- Data Encoding
+instance DerivePlutusType PMarketRedeemer where type DPTStrat _ = PlutusTypeData -- Data Encoding

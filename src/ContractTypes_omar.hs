@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module ContractTypes_matthias (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..), PMarketRedeemer (..)) where
+module ContractTypes_omar (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..), PMarketRedeemer (..)) where
 
 import Plutarch.Api.V2 (PAddress)
 import Plutarch.DataRepr (DerivePConstantViaData (DerivePConstantViaData), PDataFields)
@@ -10,8 +10,8 @@ import PlutusLedgerApi.V2 (Address)
 import PlutusTx qualified
 
 data SimpleSale = SimpleSale
-  { sellerAddress :: Address, -- The main seller Note that we are using address
-    priceOfAsset :: Integer -- cost of the value in it
+  { sellerAddress :: Address -- The main seller Note that we are using address
+  , priceOfAsset :: Integer -- Cost of the value in it
   }
   deriving stock (Show, Generic)
 
@@ -23,8 +23,8 @@ data PSimpleSale (s :: S)
       ( Term
           s
           ( PDataRecord
-              '[ "sellerAddress" ':= PAddress,
-                 "priceOfAsset" ':= PInteger
+              '[ "sellerAddress" ':= PAddress
+               , "priceOfAsset" ':= PInteger
                ]
           )
       )
@@ -32,28 +32,20 @@ data PSimpleSale (s :: S)
   deriving anyclass (PlutusType, PIsData, PDataFields, PEq, PShow)
 
 instance DerivePlutusType PSimpleSale where type DPTStrat _ = PlutusTypeData -- Data Encoding
-
 instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale -- plift Plutarch -> PlutusTx
-
 deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale) -- pconstant PlutusTx -> Plutarch
 
---PlutusTx
 data MarketRedeemer = Buy | Withdraw
   deriving stock (Generic, Show, Prelude.Eq)
 
 PlutusTx.makeIsDataIndexed ''MarketRedeemer [('Buy, 0), ('Withdraw, 1)]
 
--- Plutarch representation
 data PMarketRedeemer (s :: S)
   = PBuy (Term s (PDataRecord '[]))
   | PWithdraw (Term s (PDataRecord '[]))
   deriving stock (Generic)
   deriving anyclass (PlutusType, PIsData, PEq, PShow)
 
-instance DerivePlutusType PMarketRedeemer where type DPTStrat _ = PlutusTypeData
-
---lift
-instance PUnsafeLiftDecl PMarketRedeemer where type PLifted PMarketRedeemer = MarketRedeemer
-
---pconstant
+instance DerivePlutusType PMarketRedeemer where type DPTStrat _ = PlutusTypeData -- Data Encoding
+instance PUnsafeLiftDecl PMarketRedeemer where type PLifted PMarketRedeemer = MarketRedeemer -- plift Plutarch -> PlutusTx
 deriving via (DerivePConstantViaData MarketRedeemer PMarketRedeemer) instance (PConstantDecl MarketRedeemer)
