@@ -40,6 +40,8 @@ instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale
 -- https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Typeclasses/PConstant%20and%20PLift.md#implementing-pconstant--plift
 deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale) -- pconstant PlutusTx -> Plutarch
 
+instance PTryFrom PData PSimpleSale
+
 --PlutusTx
 data MarketRedeemer = Buy | Withdraw
   deriving stock (Generic, Show, Prelude.Eq)

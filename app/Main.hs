@@ -1,6 +1,7 @@
 module Main (main) where
 
 import AlwaysSucceeds qualified
+import MarketPlace qualified
 
 import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import Utils (writePlutusScript)
@@ -10,3 +11,4 @@ main = do
   exist <- doesDirectoryExist "compiled"
   createDirectoryIfMissing exist "compiled"
   writePlutusScript "AlwaysSucceeds" "./compiled/AlwaysSucceeds.json" AlwaysSucceeds.validator
+  writePlutusScript "MarketPlace" "./compiled/MarketPlace.json" MarketPlace.marketPlace

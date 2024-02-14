@@ -133,6 +133,12 @@ library
     ContractTypes_suganya
     ContractTypes_omar
     ContractTypes_markj
+    MarketPlace
+    MarketPlace_markj
+    MarketPlace_matthias
+    MarketPlace_suganya
+    MarketPlace_omar
+    MarketPlace_roy
     Utils
 
   other-modules:   Conversions
