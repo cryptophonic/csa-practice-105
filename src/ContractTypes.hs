@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module ContractTypes (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..), PMarketRedeemer(..)) where
+module ContractTypes (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..), PMarketRedeemer (..)) where
 
 import Plutarch.Api.V2 (PAddress)
 import Plutarch.DataRepr (DerivePConstantViaData (DerivePConstantViaData), PDataFields)
@@ -10,8 +10,8 @@ import PlutusLedgerApi.V2 (Address)
 import PlutusTx qualified
 
 data SimpleSale = SimpleSale
-  { sellerAddress :: Address, -- The main seller Note that we are using address
-    priceOfAsset :: Integer -- cost of the value in it
+  { sellerAddress :: Address -- The main seller Note that we are using address
+  , priceOfAsset :: Integer -- cost of the value in it
   }
   deriving stock (Show, Generic)
 
@@ -24,8 +24,8 @@ data PSimpleSale (s :: S)
       ( Term
           s
           ( PDataRecord
-              '[ "sellerAddress" ':= PAddress,
-                 "priceOfAsset" ':= PInteger
+              '[ "sellerAddress" ':= PAddress
+               , "priceOfAsset" ':= PInteger
                ]
           )
       )
@@ -38,18 +38,18 @@ instance DerivePlutusType PSimpleSale where type DPTStrat _ = PlutusTypeData -- 
 -- https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Typeclasses/PConstant%20and%20PLift.md#implementing-pconstant--plift
 instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale -- plift Plutarch -> PlutusTx
 -- https://github.com/Plutonomicon/plutarch-plutus/blob/master/plutarch-docs/Typeclasses/PConstant%20and%20PLift.md#implementing-pconstant--plift
+
 deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale) -- pconstant PlutusTx -> Plutarch
 
 instance PTryFrom PData PSimpleSale
 
---PlutusTx
+-- PlutusTx
 data MarketRedeemer = Buy | Withdraw
   deriving stock (Generic, Show, Prelude.Eq)
 
 PlutusTx.makeIsDataIndexed ''MarketRedeemer [('Buy, 0), ('Withdraw, 1)]
 
 -- Plutarch representation
-
 
 data PMarketRedeemer (s :: S)
   = PBuy (Term s (PDataRecord '[]))

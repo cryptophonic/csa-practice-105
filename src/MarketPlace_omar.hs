@@ -1,9 +1,10 @@
 module MarketPlace_omar (psellerPkh, marketPlace) where
-import Plutarch.Api.V1 (PAddress, PPubKeyHash, PCredential (PPubKeyCredential, PScriptCredential), PValidator)
-import Plutarch.Prelude
-import Plutarch.Monadic qualified as P
+
+import ContractTypes (PMarketRedeemer, PSimpleSale (PSimpleSale), SimpleSale (priceOfAsset))
 import Conversions (pconvert)
-import ContractTypes (PSimpleSale(PSimpleSale), PMarketRedeemer, SimpleSale (priceOfAsset))
+import Plutarch.Api.V1 (PAddress, PCredential (PPubKeyCredential, PScriptCredential), PPubKeyHash, PValidator)
+import Plutarch.Monadic qualified as P
+import Plutarch.Prelude
 
 -- sellerPkh= case sellerAddress of { Address cre m_sc -> case cre of
 --                                                            PubKeyCredential pkh -> Just pkh
@@ -15,7 +16,7 @@ psellerPkh = phoistAcyclic $ plam $ \add -> pmatch (pfield @"credential" # add) 
   PScriptCredential _ -> pcon PNothing
 
 -- Spending Validator
-marketPlace :: ClosedTerm PValidator 
+marketPlace :: ClosedTerm PValidator
 marketPlace = plam $ \datum' redeemer' ctx' -> P.do
   let redeemer = pconvert @PMarketRedeemer redeemer'
       datum = pconvert @PSimpleSale datum'
@@ -28,7 +29,4 @@ marketPlace = plam $ \datum' redeemer' ctx' -> P.do
   --                  pbuy -> continue validation
   --                  pwithdraw -> continue validation
 
-  
   undefined
-
-

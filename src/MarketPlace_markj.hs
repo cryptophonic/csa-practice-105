@@ -1,9 +1,10 @@
 module MarketPlace_markj (psellerPkh, marketPlace) where
-import Plutarch.Api.V1 (PAddress, PPubKeyHash, PCredential (PPubKeyCredential, PScriptCredential), PValidator)
-import Plutarch.Prelude
-import Plutarch.Monadic qualified as P
+
+import ContractTypes (PMarketRedeemer, PSimpleSale (PSimpleSale), SimpleSale (priceOfAsset))
 import Conversions (pconvert)
-import ContractTypes (PSimpleSale(PSimpleSale), PMarketRedeemer, SimpleSale (priceOfAsset))
+import Plutarch.Api.V1 (PAddress, PCredential (PPubKeyCredential, PScriptCredential), PPubKeyHash, PValidator)
+import Plutarch.Monadic qualified as P
+import Plutarch.Prelude
 
 -- sellerPkh= case sellerAddress of { Address cre m_sc -> case cre of
 --                                                            PubKeyCredential pkh -> Just pkh
@@ -20,16 +21,16 @@ allScriptInputsCount = plam $ \ctx -> P.do
   infoF <- pletFields @'["inputs"] ctxF.txInfo
 
 -- Spending Validator
-marketPlace :: ClosedTerm PValidator 
+marketPlace :: ClosedTerm PValidator
 marketPlace = plam $ \datum' redeemer' ctx' -> P.do
   let redeemer = pconvert @PMarketRedeemer redeemer'
       datum = pconvert @PSimpleSale datum'
   datumF <- pletFields @["sellerAddress", "priceO-fAsset"] datum
-  --ctxF <- pletFields @'["txInfo"] ctx'
+  -- ctxF <- pletFields @'["txInfo"] ctx'
   pmatch $ psellerPkh # datumF.sellerAddress $ \case
     PNothing -> pTraceError "Invalid seller address"
     PJust pkh -> case redeemer of
-                   PBuy -> (plift $ allScriptInputsCount # ctx') == 1
+      PBuy -> (plift $ allScriptInputsCount # ctx') == 1
 
   -- pattern match psellerPkh
   -- nothing -> error
@@ -38,5 +39,4 @@ marketPlace = plam $ \datum' redeemer' ctx' -> P.do
   --                  pbuy -> continue validation
   --                  pwithdraw -> continue validation
 
-  
   undefined

@@ -1,10 +1,10 @@
 module MarketPlace_suganya (psellerPkh, marketPlace) where
 
-import Plutarch.Api.V1 (PAddress, PPubKeyHash, PCredential (PPubKeyCredential, PScriptCredential), PValidator)
-import Plutarch.Prelude
-import Plutarch.Monadic qualified as P
+import ContractTypes_suganya (PMarketRedeemer (..), PSimpleSale (PSimpleSale), SimpleSale (priceOfAsset))
 import Conversions (pconvert)
-import ContractTypes_suganya (PSimpleSale(PSimpleSale), PMarketRedeemer(..), SimpleSale (priceOfAsset))
+import Plutarch.Api.V1 (PAddress, PCredential (PPubKeyCredential, PScriptCredential), PPubKeyHash, PValidator)
+import Plutarch.Monadic qualified as P
+import Plutarch.Prelude
 
 -- sellerPkh= case sellerAddress of { Address cre m_sc -> case cre of
 --                                                            PubKeyCredential pkh -> Just pkh
@@ -16,7 +16,7 @@ psellerPkh = phoistAcyclic $ plam $ \add -> pmatch (pfield @"credential" # add) 
   PScriptCredential _ -> pcon PNothing
 
 -- Spending Validator
-marketPlace :: ClosedTerm PValidator 
+marketPlace :: ClosedTerm PValidator
 marketPlace = plam $ \datum' redeemer' ctx' -> P.do
   let redeemer = pconvert @PMarketRedeemer redeemer'
       datum = pconvert @PSimpleSale datum'
@@ -26,7 +26,7 @@ marketPlace = plam $ \datum' redeemer' ctx' -> P.do
     PNothing -> perror
     PJust _ -> pmatch redeemer $ \case
       PBuy _ -> undefined
-      PWithdraw  _ -> undefined
+      PWithdraw _ -> undefined
 
 {-
 {-# INLINABLE allScriptInputsCount #-}
@@ -36,12 +36,12 @@ allScriptInputsCount ctx@(ScriptContext info purpose)=
   where
   countTxOut (TxInInfo _ (TxOut addr _ _ _)) = case addr of { Address cre m_sc -> case cre of
                                                               PubKeyCredential pkh -> 0
-                                                              ScriptCredential vh -> 1  } 
-      
+                                                              ScriptCredential vh -> 1  }
+
 -}
 
-  {-
-  pmatch psellerPkh $ \case 
+{-
+  pmatch psellerPkh $ \case
     PNothing -> perror
     PJust _ -> pmatch redeemer $\case
                 PBuy -> undefined
@@ -54,7 +54,6 @@ allScriptInputsCount ctx@(ScriptContext info purpose)=
   --                  pbuy -> continue validation
   --                  pwithdraw -> continue validation
 
-  
   undefined
 
 -}

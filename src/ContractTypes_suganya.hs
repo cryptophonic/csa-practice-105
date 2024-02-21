@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module ContractTypes_suganya (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..),PMarketRedeemer(..)) where
+module ContractTypes_suganya (SimpleSale (..), PSimpleSale (..), MarketRedeemer (..), PMarketRedeemer (..)) where
 
 import Plutarch.Api.V2 (PAddress)
 import Plutarch.DataRepr (DerivePConstantViaData (DerivePConstantViaData), PDataFields)
@@ -10,8 +10,8 @@ import PlutusLedgerApi.V2 (Address)
 import PlutusTx qualified
 
 data SimpleSale = SimpleSale
-  { sellerAddress :: Address, -- The main seller Note that we are using address
-    priceOfAsset :: Integer -- cost of the value in it
+  { sellerAddress :: Address -- The main seller Note that we are using address
+  , priceOfAsset :: Integer -- cost of the value in it
   }
   deriving stock (Show, Generic)
 
@@ -23,8 +23,8 @@ data PSimpleSale (s :: S)
       ( Term
           s
           ( PDataRecord
-              '[ "sellerAddress" ':= PAddress,
-                 "priceOfAsset" ':= PInteger
+              '[ "sellerAddress" ':= PAddress
+               , "priceOfAsset" ':= PInteger
                ]
           )
       )
@@ -34,10 +34,10 @@ data PSimpleSale (s :: S)
 instance DerivePlutusType PSimpleSale where type DPTStrat _ = PlutusTypeData -- Data Encoding
 
 -- plift Plutarch -> PlutusTx
-instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale 
+instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale
 
--- pconstant PlutusTx -> Plutarch ,m 
-deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale) 
+-- pconstant PlutusTx -> Plutarch ,m
+deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale)
 
 instance PTryFrom PData PSimpleSale
 
@@ -46,7 +46,7 @@ data MarketRedeemer = BuyAction | WithdrawAction
 
 PlutusTx.makeIsDataIndexed ''MarketRedeemer [('BuyAction, 0), ('WithdrawAction, 1)]
 
--- sum data types 
+-- sum data types
 data PMarketRedeemer (s :: S)
   = PBuy (Term s (PDataRecord '[]))
   | PWithdraw (Term s (PDataRecord '[]))

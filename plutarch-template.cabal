@@ -123,24 +123,39 @@ common dependencies
     , serialise
     , text
 
+common test-dependencies
+  build-depends:
+    , hedgehog
+    , hedgehog-quickcheck
+    , plutarch-context-builder
+    , plutarch-quickcheck
+    , plutarch-unit
+    , pretty-show
+    , QuickCheck
+    , tasty
+    , tasty-hedgehog
+    , tasty-hunit
+    , tasty-quickcheck
+    , text
+
 library
   import:          lang, dependencies
   exposed-modules:
     AlwaysSucceeds
     ContractTypes
-    -- ContractTypes_davidp
-    ContractTypes_matthias
-    ContractTypes_suganya
-    ContractTypes_omar
     ContractTypes_markj
+    ContractTypes_matthias
+    ContractTypes_omar
+    ContractTypes_suganya
     MarketPlace
-    MarketPlace_markj
-    MarketPlace_matthias
-    MarketPlace_suganya
-    MarketPlace_omar
-    MarketPlace_roy
     Utils
 
+  -- ContractTypes_davidp
+  -- MarketPlace_markj
+  -- MarketPlace_matthias
+  -- MarketPlace_suganya
+  -- MarketPlace_omar
+  -- MarketPlace_roy
   other-modules:   Conversions
   hs-source-dirs:  src
 
@@ -161,3 +176,13 @@ executable plutarch-template
   -- other-extensions:
   build-depends:  plutarch-template
   hs-source-dirs: app
+
+test-suite plutarch-template-test
+  import:         lang, dependencies, test-dependencies
+  type:           exitcode-stdio-1.0
+  main-is:        Spec.hs
+  hs-source-dirs: test
+  other-modules:  Spec.NFTMarketPlaceSpec
+
+  -- Spec.NFTMarketProperty
+  build-depends:  plutarch-template

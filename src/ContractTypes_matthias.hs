@@ -10,8 +10,8 @@ import PlutusLedgerApi.V2 (Address)
 import PlutusTx qualified
 
 data SimpleSale = SimpleSale
-  { sellerAddress :: Address, -- The main seller Note that we are using address
-    priceOfAsset :: Integer -- cost of the value in it
+  { sellerAddress :: Address -- The main seller Note that we are using address
+  , priceOfAsset :: Integer -- cost of the value in it
   }
   deriving stock (Show, Generic)
 
@@ -23,8 +23,8 @@ data PSimpleSale (s :: S)
       ( Term
           s
           ( PDataRecord
-              '[ "sellerAddress" ':= PAddress,
-                 "priceOfAsset" ':= PInteger
+              '[ "sellerAddress" ':= PAddress
+               , "priceOfAsset" ':= PInteger
                ]
           )
       )
@@ -37,7 +37,7 @@ instance PUnsafeLiftDecl PSimpleSale where type PLifted PSimpleSale = SimpleSale
 
 deriving via (DerivePConstantViaData SimpleSale PSimpleSale) instance (PConstantDecl SimpleSale) -- pconstant PlutusTx -> Plutarch
 
---PlutusTx
+-- PlutusTx
 data MarketRedeemer = Buy | Withdraw
   deriving stock (Generic, Show, Prelude.Eq)
 
@@ -52,8 +52,8 @@ data PMarketRedeemer (s :: S)
 
 instance DerivePlutusType PMarketRedeemer where type DPTStrat _ = PlutusTypeData
 
---lift
+-- lift
 instance PUnsafeLiftDecl PMarketRedeemer where type PLifted PMarketRedeemer = MarketRedeemer
 
---pconstant
+-- pconstant
 deriving via (DerivePConstantViaData MarketRedeemer PMarketRedeemer) instance (PConstantDecl MarketRedeemer)
