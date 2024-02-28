@@ -6,15 +6,15 @@ module Spec.NFTMarketProperty (testPByteString, functionprop, runpropPlutarch, g
 import Control.Applicative (Applicative (liftA2))
 import Data.ByteString.Char8 (ByteString, pack)
 import Data.ByteString.Hash (sha2_256)
+import MarketPlace (psellerPkh)
 import Plutarch.Prelude
 import Plutarch.Test.QuickCheck (fromPFun)
 import PlutusLedgerApi.V1.Value (AssetClass (..), assetClassValue, currencySymbol, tokenName)
-import PlutusLedgerApi.V2 (Address (..), Credential (PubKeyCredential, ScriptCredential), PubKeyHash (..), ScriptHash (ScriptHash), Value )
-import PlutusTx.Prelude (toBuiltin)
-import Test.QuickCheck (Arbitrary (arbitrary), Gen, chooseAny, elements, forAll, listOf1, oneof, vectorOf, Testable (property))
-import Test.QuickCheck.Property (Property)
+import PlutusLedgerApi.V2 (Address (..), Credential (PubKeyCredential, ScriptCredential), PubKeyHash (..), ScriptHash (ScriptHash), Value)
 import PlutusTx.Builtins (BuiltinByteString)
-import MarketPlace (psellerPkh)
+import PlutusTx.Prelude (toBuiltin)
+import Test.QuickCheck (Arbitrary (arbitrary), Gen, chooseAny, elements, forAll, listOf1, oneof, vectorOf)
+import Test.QuickCheck.Property (Property)
 
 instance Arbitrary ByteString where
   arbitrary :: Gen ByteString
@@ -83,14 +83,24 @@ testPByteString = do
   l <- vectorOf 10 arbitrary
   pure l
 
--- genSellerPKH :: Gen ((Address, PubKeyHash))
--- gensellerPKH = do
---   undefined
+{-
+Address
+addressCredential :: Credential
+addressStakingCredential :: Maybe StakingCredential
+-}
 
--- propertySellerPKH :: PubKeyHash -> Address -> Term s PBool
--- propertySellerPKH pkh addr = 
-  -- psellerPkh (pconstant ...)  (pconstant ...) #== (pconstant ...)
-  -- undefined
+gensellerPKH :: Gen ((Address, PubKeyHash))
+gensellerPKH = do
+  add <- genAddress
+  pkh <- genPubKeyHash
+  return (add, pkh)
+
+propertySellerPKH :: forall {s :: S}. PubKeyHash -> Address -> Term s PBool
+propertySellerPKH pkh addr =
+  (psellerPkh # (pconstantData addr)) #== (pcon $ PJust (pconstantData pkh))
+
+runpropSellerPKH :: Property
+runpropSellerPKH = forAll gensellerPKH $ (\(addr, pkh) ->  fromPFun $ propertySellerPKH pkh addr)
 
 -- Random Integer
 functionprop :: Term s (PInteger :--> PBool)

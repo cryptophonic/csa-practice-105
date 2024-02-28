@@ -122,6 +122,7 @@ common dependencies
     , ply-plutarch
     , serialise
     , text
+    , memory
 
 common test-dependencies
   build-depends:
@@ -185,5 +186,7 @@ test-suite plutarch-template-test
   other-modules:
     Spec.NFTMarketPlaceSpec
     Spec.NFTMarketProperty
+    Spec.NFTMarketProperty_roy
+    Spec.NFTMarketProperty_suganya
 
   build-depends:  plutarch-template

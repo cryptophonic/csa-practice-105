@@ -83,14 +83,20 @@ testPByteString = do
   l <- vectorOf 10 arbitrary
   pure l
 
--- genSellerPKH :: Gen ((Address, PubKeyHash))
--- gensellerPKH = do
---   undefined
+gensellerPKH :: Gen ((Address, PubKeyHash))
+gensellerPKH = do
+    addr <- genAddress
+    pkh <- genPubKeyHash
+    return $ (addr,pkh)
 
--- propertySellerPKH :: PubKeyHash -> Address -> Term s PBool
--- propertySellerPKH pkh addr = 
-  -- psellerPkh (pconstant ...)  (pconstant ...) #== (pconstant ...)
+propertySellerPKH :: PubKeyHash -> Address -> Term s PBool
+propertySellerPKH pkh addr = 
+  (psellerPkh # (pconstantData addr)) #== (pcon $ PJust (pconstantData pkh))
   -- undefined
+
+runpropPseller :: Property
+runpropPseller = forAll gensellerPKH $ fromPFun 
+propertySellerPKH
 
 -- Random Integer
 functionprop :: Term s (PInteger :--> PBool)
