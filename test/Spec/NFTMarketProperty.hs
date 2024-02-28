@@ -29,7 +29,7 @@ genPubKeyHash = PubKeyHash . toBuiltin <$> genHashByteString
 
 -- | Random user credential.
 genUserCredential :: Gen Credential
-genUserCredential = PubKeyCredential . PubKeyHash . toBuiltin <$> genHashByteString
+genUserCredential = PubKeyCredential <$> genPubKeyHash
 
 -- | Random script credential.
 genScriptCredential :: Gen Credential
@@ -41,9 +41,6 @@ genCredential = oneof [genUserCredential, genScriptCredential]
 
 genAddress :: Gen Address
 genAddress = flip Address Nothing <$> genCredential
-
--- Address payment staking
--- Address staking -> _
 
 genAssetClass :: Gen AssetClass
 genAssetClass =

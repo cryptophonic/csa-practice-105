@@ -182,6 +182,8 @@ test-suite plutarch-template-test
   type:           exitcode-stdio-1.0
   main-is:        Spec.hs
   hs-source-dirs: test
-  other-modules:  Spec.NFTMarketPlaceSpec 
-                  Spec.NFTMarketProperty
+  other-modules:
+    Spec.NFTMarketPlaceSpec
+    Spec.NFTMarketProperty
+
   build-depends:  plutarch-template

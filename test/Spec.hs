@@ -10,8 +10,8 @@ main = do
   defaultMain $
     testGroup
       "all"
-      [ unitTests,
-        propertyTests
+      [ unitTests
+      , propertyTests
       ]
 
 unitTests :: TestTree

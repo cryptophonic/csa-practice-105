@@ -30,30 +30,30 @@ inputScript :: SpendingBuilder
 inputScript =
   input $
     mconcat
-      [ script sampleScriptHash,
-        withValue (singleton adaSymbol adaToken 2),
-        withValue clayNFT,
-        withRefTxId "759d3795c282bc2680d5541faa409f789cde81df369d03d057e4b58954ed865b",
-        withRefIndex 1,
-        withRedeemer (PlutusTx.toData Buy)
+      [ script sampleScriptHash
+      , withValue (singleton adaSymbol adaToken 2)
+      , withValue clayNFT
+      , withRefTxId "759d3795c282bc2680d5541faa409f789cde81df369d03d057e4b58954ed865b"
+      , withRefIndex 1
+      , withRedeemer (PlutusTx.toData Buy)
       ]
 
 inputBob :: (Builder a) => a
 inputBob =
   input $
     mconcat
-      [ address bobAddress,
-        withValue (singleton adaSymbol adaToken 102),
-        withRefTxId "24625f40313747ed839c2e20de5c1e2040c01411e6f528ee4b4abae5115c6608",
-        withRefIndex 2
+      [ address bobAddress
+      , withValue (singleton adaSymbol adaToken 102)
+      , withRefTxId "24625f40313747ed839c2e20de5c1e2040c01411e6f528ee4b4abae5115c6608"
+      , withRefIndex 2
       ]
 
 outputToAlice :: (Builder a) => a
 outputToAlice =
   output $
     mconcat
-      [ address aliceAddress,
-        withValue
+      [ address aliceAddress
+      , withValue
           (singleton adaSymbol adaToken 102 <> clayNFT)
       ]
 
@@ -61,8 +61,8 @@ outputToAliceBuilder :: (Builder a) => Integer -> Address -> Value -> a
 outputToAliceBuilder amount add nft =
   output $
     mconcat
-      [ address add,
-        withValue
+      [ address add
+      , withValue
           (singleton adaSymbol adaToken amount <> nft)
       ]
 
@@ -73,26 +73,26 @@ goodCtx1 :: ScriptContext
 goodCtx1 =
   buildSpending checkPhase1 $
     mconcat
-      [ inputScript,
-        inputBob,
-        outputToAlice,
-        signedWith samplePubKeyHash1,
-        fee (singleton adaSymbol adaToken 2),
-        txId "b2dfbe34017b9061464f401ec924ece385bb3ec07061c27907844b4d3ef6666e",
-        commonPurpose
+      [ inputScript
+      , inputBob
+      , outputToAlice
+      , signedWith samplePubKeyHash1
+      , fee (singleton adaSymbol adaToken 2)
+      , txId "b2dfbe34017b9061464f401ec924ece385bb3ec07061c27907844b4d3ef6666e"
+      , commonPurpose
       ]
 
 badCtx1 :: ScriptContext
 badCtx1 =
   buildSpending checkPhase1 $
     mconcat
-      [ inputScript,
-        inputBob,
-        outputToAliceBuilder 98 aliceAddress clayNFT,
-        signedWith samplePubKeyHash1,
-        fee (singleton adaSymbol adaToken 6),
-        txId "b2dfbe34017b9061464f401ec924ece385bb3ec07061c27907844b4d3ef6666e",
-        commonPurpose
+      [ inputScript
+      , inputBob
+      , outputToAliceBuilder 98 aliceAddress clayNFT
+      , signedWith samplePubKeyHash1
+      , fee (singleton adaSymbol adaToken 6)
+      , txId "b2dfbe34017b9061464f401ec924ece385bb3ec07061c27907844b4d3ef6666e"
+      , commonPurpose
       ]
 
 sampleTest :: TestTree
@@ -100,14 +100,14 @@ sampleTest = tryFromPTerm "My Test" MarketPlace.marketPlace $ do
   testEvalCase
     "this test passed"
     Success
-    [ PlutusTx.toData (SimpleSale aliceAddress 100),
-      PlutusTx.toData (Buy),
-      PlutusTx.toData goodCtx1
+    [ PlutusTx.toData (SimpleSale aliceAddress 100)
+    , PlutusTx.toData (Buy)
+    , PlutusTx.toData goodCtx1
     ]
   testEvalCase
     "this test passed"
     Failure
-    [ PlutusTx.toData (SimpleSale aliceAddress 100),
-      PlutusTx.toData (Buy),
-      PlutusTx.toData badCtx1
+    [ PlutusTx.toData (SimpleSale aliceAddress 100)
+    , PlutusTx.toData (Buy)
+    , PlutusTx.toData badCtx1
     ]
