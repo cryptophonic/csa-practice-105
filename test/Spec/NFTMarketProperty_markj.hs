@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Spec.NFTMarketProperty_markj (testPByteString, runpropPlutarch, genHashByteString, genPubKeyHash, genUserCredential, genScriptCredential, genCredential, genAddress, genPrettyByteString, genAssetClass, genValue, genSingletonValue, genScriptContext, genSellerPKH, propertySellerPKH) where
+module Spec.NFTMarketProperty_markj (testPByteString, runpropPlutarch, genHashByteString, genPubKeyHash, genUserCredential, genScriptCredential, genCredential, genAddress, genPrettyByteString, genAssetClass, genValue, genSingletonValue, genScriptContext, propertySellerPKH) where
 
 import Control.Applicative (Applicative (liftA2))
 import Data.ByteString.Char8 (ByteString, pack)
@@ -15,13 +15,16 @@ import PlutusTx.Prelude (toBuiltin)
 import Test.QuickCheck (Arbitrary (arbitrary), Gen, chooseAny, elements, forAll, listOf1, oneof, vectorOf, Testable (property))
 import Test.QuickCheck.Property (Property)
 import PlutusTx.Builtins (BuiltinByteString)
-import Plutarch.Extra.Maybe (pjust, pfromMaybe)
+import Plutarch.Extra.Maybe (pjust, pfromMaybe, pisJust, pnothing)
 
 import MarketPlace_markj (addressToPkh)
 import Plutarch.Maybe (pfromJust)
 import Plutarch.Api.V2 (PAddress)
 import Plutarch.Api.V1 (PPubKeyHash)
 import Plutarch.Api.V2 (PTuple)
+import Plutarch.Api.V1.Address (PCredential)
+import Plutarch.Api.V1.Address (PCredential(PPubKeyCredential))
+import Plutarch.Api.V1.Address (PCredential(PScriptCredential))
 
 instance Arbitrary ByteString where
   arbitrary :: Gen ByteString
@@ -89,19 +92,18 @@ testPByteString = do
   -- n <- sha2_256 <$> arbitrary
   l <- vectorOf 10 arbitrary
   pure l
+--genSellerPKH :: Gen (Address, PubKeyHash)
+--genSellerPKH = do
+  --pkh <- genPubKeyHash
+  --return $ (Address (PubKeyCredential pkh) $ Nothing, pkh)
 
-genSellerPKH :: Gen (Address, PubKeyHash)
-genSellerPKH = do
-  pkh <- genPubKeyHash
-  return $ (Address (PubKeyCredential pkh) $ Nothing, pkh)
-
-propertySellerPKH :: Term s (PTuple PAddress PPubKeyHash :--> PBool)
-propertySellerPKH = plam $ \tuple -> P.do
-  let addr = (pfield @"_0" #) tuple
-      pkh = (pfield @"_1" #) tuple
-      maybePkh = addressToPkh # addr
-      computedPkh = pfromJust # maybePkh
-  computedPkh #== pkh
+propertySellerPKH :: Term s (PAddress :--> PBool)
+propertySellerPKH = plam $ \addr -> P.do
+  let maybePkh = addressToPkh # addr
+      cred = pfield @"credential" # addr
+  pmatch cred $ \case
+    PPubKeyCredential _ -> pisJust # maybePkh
+    PScriptCredential _ -> maybePkh #== pnothing
 
 -- Random Integer
 --functionprop :: Term s (PInteger :--> PBool)
