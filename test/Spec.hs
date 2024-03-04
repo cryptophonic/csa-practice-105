@@ -1,7 +1,7 @@
 module Main (main) where
 
 import Spec.NFTMarketPlaceSpec (sampleTest)
-import Spec.NFTMarketProperty (runpropPlutarch)
+import Spec.NFTMarketProperty_markj (runpropPlutarch)
 import Test.Tasty (TestTree, defaultMain, testGroup)
 import Test.Tasty.QuickCheck (testProperty)
 

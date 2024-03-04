@@ -1,7 +1,7 @@
 module Spec.NFTMarketPlaceSpec (sampleScriptHash, samplePubKeyHash1, aliceAddress, clayNFT, goodCtx1, samplePubKeyHash2, sampleTest) where
 
 import ContractTypes (MarketRedeemer (Buy), SimpleSale (SimpleSale))
-import MarketPlace qualified
+import MarketPlace_markj qualified
 import Plutarch.Context (Builder, SpendingBuilder, address, buildSpending, checkPhase1, fee, input, output, script, signedWith, txId, withRedeemer, withRefIndex, withRefTxId, withSpendingOutRefIdx, withValue)
 import Plutarch.Test.Precompiled (Expectation (..), testEvalCase, tryFromPTerm)
 import PlutusLedgerApi.V2 (Address (Address), Credential (PubKeyCredential), CurrencySymbol (CurrencySymbol), PubKeyHash, ScriptContext, ScriptHash, TokenName (TokenName), Value, adaSymbol, adaToken, singleton)
@@ -96,7 +96,7 @@ badCtx1 =
       ]
 
 sampleTest :: TestTree
-sampleTest = tryFromPTerm "My Test" MarketPlace.marketPlace $ do
+sampleTest = tryFromPTerm "My Test" MarketPlace_markj.marketPlace $ do
   testEvalCase
     "this test passed"
     Success

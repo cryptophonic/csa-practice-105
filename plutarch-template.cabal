@@ -144,15 +144,11 @@ library
   exposed-modules:
     AlwaysSucceeds
     ContractTypes
-    ContractTypes_markj
-    ContractTypes_matthias
-    ContractTypes_omar
-    ContractTypes_suganya
-    MarketPlace
     Utils
+    ContractTypes_markj
+    MarketPlace_markj
 
   -- ContractTypes_davidp
-  -- MarketPlace_markj
   -- MarketPlace_matthias
   -- MarketPlace_suganya
   -- MarketPlace_omar
@@ -185,8 +181,7 @@ test-suite plutarch-template-test
   hs-source-dirs: test
   other-modules:
     Spec.NFTMarketPlaceSpec
-    Spec.NFTMarketProperty
-    Spec.NFTMarketProperty_roy
-    Spec.NFTMarketProperty_suganya
-
-  build-depends:  plutarch-template
+    --Spec.NFTMarketProperty
+    Spec.NFTMarketProperty_markj
+  build-depends:  
+    , plutarch-template
